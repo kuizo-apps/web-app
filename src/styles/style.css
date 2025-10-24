@@ -604,11 +604,11 @@ a.action-btn.disabled {
 }
 
 .question-item.correct {
-  border-left-color: #28a745;
+  border-left-color: var(--primary-color);
 }
 
 .question-item.incorrect {
-  border-left-color: #dc3545;
+  border-left-color: var(--primary-color);
 }
 
 .question-meta {
@@ -655,16 +655,16 @@ a.action-btn.disabled {
 }
 
 .option-item.selected-correct {
-  background-color: #d4edda;
-  border-color: #28a745;
-  color: #155724;
+  background-color: #e7f1ff;
+  border-color: var(--primary-color);;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .option-item.selected-incorrect {
-  background-color: #f8d7da;
-  border-color: #dc3545;
-  color: #721c24;
+  background-color: #e7f1ff;
+  border-color: var(--primary-color);;
+  color: var(--text-primary);
   font-weight: 500;
 }
 

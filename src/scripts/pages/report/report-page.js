@@ -74,6 +74,8 @@ class ReportPage {
     const difficultyData = history.map((item) => item.level_at_attempt); // Menggunakan level_at_attempt
     const levelTextMap = { 1: "Mudah", 2: "Sedang", 3: "Sulit" };
 
+    const isMobile = window.innerWidth < 768;
+
     new Chart(ctx, {
       type: "line",
       data: {
@@ -86,7 +88,7 @@ class ReportPage {
             backgroundColor: bgColor,
             fill: true,
             pointBackgroundColor: color,
-            pointRadius: 4,
+            pointRadius: isMobile ? 2 : 4,
           },
         ],
       },
@@ -104,7 +106,20 @@ class ReportPage {
             grid: { color: "rgba(0, 0, 0, 0.05)" },
           },
           x: {
-            title: { display: true, text: "Urutan Soal", padding: { top: 10, bottom: 10 } },
+            title: {
+              display: true,
+              text: "Urutan Soal",
+              padding: { top: 10, bottom: 10 },
+            },
+            ticks: {
+              callback: function (value, index, ticks) {
+                if (isMobile && history.length > 20) {
+                  const label = this.getLabelForValue(value);
+                  return parseInt(label) % 5 === 0 ? label : "";
+                }
+                return this.getLabelForValue(value);
+              },
+            },
             grid: { display: false },
           },
         },
@@ -118,9 +133,12 @@ class ReportPage {
           tooltip: {
             callbacks: {
               title: (tooltipItems) => `Soal ke-${tooltipItems[0].label}`,
-              label: (context) => {
-                const level = context.parsed.y;
-                return `Level Soal ${levelTextMap[level] || "Tidak diketahui"}`;
+              label: () => null,
+              afterBody: (context) => {
+                const level = context[0].parsed.y;
+                return `Level Kesulitan ${
+                  levelTextMap[level] || "Tidak diketahui"
+                }`;
               },
             },
           },
