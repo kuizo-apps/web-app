@@ -30,6 +30,7 @@ body {
   color: var(--text-primary);
 }
 
+
 /* --- Halaman Login --- */
 .login-page-container {
   display: flex;
@@ -74,6 +75,22 @@ body {
   margin-bottom: 8px;
   font-weight: 500;
   font-size: 14px;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1.1rem;
 }
 
 .input-wrapper input {
@@ -326,6 +343,8 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .room-item {
@@ -334,6 +353,8 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   display: flex;
+  width: 100%;
+  min-width: 0;
   flex-direction: column;
 }
 

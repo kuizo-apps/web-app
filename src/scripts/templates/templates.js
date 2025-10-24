@@ -207,8 +207,17 @@ export const createLoginPageTemplate = () => `
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <div class="input-wrapper">
-            <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required/>
+          <div class="input-wrapper password-wrapper">
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="Masukkan password Anda" 
+              required
+            />
+            <button type="button" id="togglePassword" class="toggle-password-btn">
+              <i class="bi bi-eye"></i>
+            </button>
           </div>
         </div>
         <div id="submit-container">

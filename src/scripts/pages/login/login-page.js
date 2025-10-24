@@ -17,6 +17,17 @@ class LoginPage {
     });
 
     const loginForm = document.getElementById("loginForm");
+    const toggleBtn = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    toggleBtn.addEventListener("click", () => {
+      const isHidden = passwordInput.type === "password";
+      passwordInput.type = isHidden ? "text" : "password";
+      toggleBtn.innerHTML = isHidden
+        ? '<i class="bi bi-eye-slash"></i>'
+        : '<i class="bi bi-eye"></i>';
+    });
+    
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const credentials = {
@@ -25,6 +36,7 @@ class LoginPage {
       };
       await this._presenter.login(credentials);
     });
+
   }
 
   loginSuccess() {
