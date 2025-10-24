@@ -30,9 +30,9 @@ class LoginPage {
   loginSuccess() {
     Swal.fire({
       icon: "success",
+      width: "400px",
       title: "Login Berhasil!",
-      text: "Anda akan diarahkan ke dashboard.",
-      timer: 1500,
+      timer: 1200,
       showConfirmButton: false,
     }).then(() => {
       window.location.hash = "/home";
@@ -42,8 +42,11 @@ class LoginPage {
   loginFailed(message) {
     Swal.fire({
       icon: "error",
+      width: "400px",
       title: "Login Gagal",
       text: message,
+      showConfirmButton: true,
+      confirmButtonText: 'Coba Lagi',
       confirmButtonColor: getComputedStyle(document.documentElement)
         .getPropertyValue("--primary-color")
         .trim(),

@@ -3,3 +3,5 @@ export const API_CONFIG = {
 };
 
 export const ACCESS_TOKEN_KEY = "kuizo-team-access-token";
+
+export const USER_NAME_KEY = "kuizo-user-name";

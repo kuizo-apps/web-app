@@ -14,6 +14,7 @@ export default class LoginPresenter {
     try {
       const response = await this.#model.loginUser({ email, password });
       this.#authModel.putAccessToken(response.data.accessToken);
+      this.#authModel.putUserName(response.data.name);
       this.#view.loginSuccess();
     } catch (error) {
       console.error("Login Error:", error);

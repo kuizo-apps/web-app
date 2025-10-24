@@ -15,6 +15,26 @@ class App {
       getLogout();
     });
 
+    const hamburgerBtn = document.getElementById("hamburger-btn");
+    const mobileNav = document.getElementById("mobile-nav");
+    const mainContent = document.getElementById("main-content");
+
+    hamburgerBtn.addEventListener("click", (event) => {
+      event.stopPropagation();  
+      mobileNav.classList.toggle("open");
+    });
+
+    mainContent.addEventListener("click", () => {
+      mobileNav.classList.remove("open");
+    });
+
+    document
+      .getElementById("mobile-logoutButton")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        getLogout();
+      });
+
     this._updateActiveMenu();
   }
 

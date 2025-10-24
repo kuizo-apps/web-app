@@ -1,5 +1,5 @@
 import { getActiveRoute } from "../routes/url-parser.js";
-import { ACCESS_TOKEN_KEY } from "../config.js";
+import { ACCESS_TOKEN_KEY, USER_NAME_KEY } from "../config.js";
 
 export function getAccessToken() {
   try {
@@ -26,12 +26,32 @@ export function putAccessToken(token) {
   }
 }
 
+export function isTokenExpired(token) {
+  if (!token) return true;
+
+  const decodedToken = parseJwt(token);
+  if (!decodedToken || !decodedToken.exp) return true;
+
+  const expirationTimeInSeconds = decodedToken.exp;
+  const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+
+  return expirationTimeInSeconds < currentTimeInSeconds;
+}
+
 export function removeAccessToken() {
   try {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     return true;
   } catch (error) {
-    console.error("getLogout: error:", error);
+    return false;
+  }
+}
+
+export function removeUserName() {
+  try {
+    localStorage.removeItem(USER_NAME_KEY);
+    return true;
+  } catch (error) {
     return false;
   }
 }
@@ -51,18 +71,15 @@ export function checkUnauthenticatedRouteOnly(page) {
 }
 
 export function checkAuthenticatedRoute(page) {
-  const isLogin = !!getAccessToken();
-
-  if (!isLogin) {
-    location.hash = "/login";
-    return null;
-  }
-
-  return page;
+  const token = getAccessToken();
+  if (token && !isTokenExpired(token)) return page;
+  getLogout();
+  return null;
 }
 
 export function getLogout() {
   removeAccessToken();
+  removeUserName();
   window.location.hash = "/login";
 }
 
@@ -91,4 +108,33 @@ export function capitalizeEachWord(str) {
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
+}
+
+export function putUserName(name) {
+  try {
+    localStorage.setItem(USER_NAME_KEY, name);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export function getUserName() {
+  try {
+    const userName = localStorage.getItem(USER_NAME_KEY);
+    return userName === "null" || userName === "undefined" ? null : userName;
+  } catch (error) {
+    return null;
+  }
+}
+
+export function getUserId() {
+  try {
+    const token = getAccessToken();
+    if (!token) return null;
+    const decoded = parseJwt(token);
+    return decoded ? decoded.id : null;
+  } catch (error) {
+    return null;
+  }
 }
