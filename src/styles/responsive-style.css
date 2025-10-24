@@ -20,11 +20,9 @@
   display: flex;
   flex-direction: column;
 }
-
 .mobile-nav.open {
   transform: translateY(0);
 }
-
 .mobile-nav a {
   padding: 1rem 1.5rem;
   text-decoration: none;
@@ -38,128 +36,94 @@
 }
 
 @media (max-width: 768px) {
+  .main-header,
+  .main-content {
+    padding: 0 1rem;
+  }
+  .main-content {
+    margin: 1.5rem auto;
+  }
   .header-nav,
   .header-right .logout-btn {
     display: none;
   }
-
   .hamburger-btn {
     display: block;
   }
-
-  .main-content {
-    padding: 0 1rem;
-  }
-
-  .main-content {
-    margin: 1.5rem auto;
-  }
-
-  .main-header,
-  .main-content {
-    padding: 0 1rem; 
-  }
-
-  .main-content {
-    margin: 1.5rem auto;  
-  }
-
-  .header-nav {
-    display: none; 
-  }
   .page-header h1 {
-    font-size: 1.5rem;  
+    font-size: 1.5rem;
   }
   .page-header p {
     font-size: 0.9rem;
   }
-
   .login-form-wrapper {
     padding: 1.5rem;
-  } 
-
+  }
   .join-room-form {
-    flex-direction: column; 
+    flex-direction: column;
     align-items: stretch;
   }
-
   .join-room-form button {
-    width: 100%; 
+    width: 100%;
   }
-
   .room-list {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 1rem;
-  } 
-
-  .waiting-room-container {
-    grid-template-columns: 1fr; 
   }
-
+  .waiting-room-container {
+    grid-template-columns: 1fr;
+  }
   .waiting-room-info,
   .participant-item {
     padding: 1.5rem;
-  } 
-
+  }
   .report-main-info {
     padding: 1.5rem;
   }
-
   .summary-cards {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
-
   .summary-card {
     padding: 1rem;
   }
-
   .summary-card p {
     font-size: 1.5rem;
   }
   .question-item,
   .chart-container {
     padding: 1rem;
-  } 
-
+  }
   .exam-container {
     margin: 1rem;
     min-height: calc(100vh - 2rem);
   }
-
   .exam-content {
     padding: 1.5rem;
   }
-
   .option-label {
     padding: 0.75rem;
   }
-
   .exam-header h1 {
     font-size: 1rem;
-  } 
-
+  }
   .countdown-content h1 {
     font-size: 2rem;
   }
   #countdown-timer {
-    font-size: 6rem; 
+    font-size: 6rem;
   }
-
   .modal-content.result-modal {
     max-width: 90%;
   }
-
   .result-summary-cards {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     text-align: center;
   }
-
-  .final-message {
-    font-size: 3rem;
-  }
-
   .result-summary-cards .summary-card {
     justify-content: center;
     text-align: center;
+  }
+  .final-message {
+    font-size: 3rem;
   }
 }
