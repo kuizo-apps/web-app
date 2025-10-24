@@ -81,8 +81,7 @@ class WaitingRoomPage {
     const timerEl = document.getElementById("countdown-timer");
 
     const countdownContent = overlay.querySelector(".countdown-content");
-    
-    
+
     if (!overlay || !timerEl || !countdownContent) return;
 
     overlay.classList.remove("hidden");
@@ -96,7 +95,7 @@ class WaitingRoomPage {
       } else {
         clearInterval(intervalId);
         countdownContent.innerHTML =
-          '<div class="final-message">Ujian Dimulai</div>';
+          '<div class="final-message">Ujian Dimulai!</div>';
         setTimeout(() => {
           window.location.hash = `/exam/${roomId}`;
           setTimeout(() => overlay.classList.add("hidden"), 500);
