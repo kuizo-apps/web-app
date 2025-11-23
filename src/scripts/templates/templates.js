@@ -1,34 +1,24 @@
 // ===== Shared Maps =====
 export const STATUS_MAP = {
   persiapan: { text: "Persiapan", className: "persiapan" },
-  mulai_ujian: { text: "Berlangsung", className: "berlangsung" },
-  ujian_berakhir: { text: "Berakhir", className: "berakhir" },
+  berlangsung: { text: "Berlangsung", className: "berlangsung" },
+  berakhir: { text: "Berakhir", className: "berakhir" },
 };
 
 export const MECHANISM_BADGE_MAP = {
   static: { text: "Statis", className: "static", icon: "bi-card-list" },
   random: { text: "Acak", className: "random", icon: "bi-shuffle" },
-  adaptive_fixed_length: {
-    text: "Adaptif",
-    className: "adaptive-fixed",
-    icon: "bi-sliders",
-  },
-  adaptive_variable_length: {
-    text: "Adaptif Lanjutan",
-    className: "adaptive-variable",
-    icon: "bi-graph-up-arrow",
+  rule_based: {
+    text: "Adaptif (Rule)",
+    className: "adaptive-fixed", // Kita pakai style adaptive utk rule_based
+    icon: "bi-cpu",
   },
 };
 
 export const MECHANISM_DESC_MAP = {
-  static:
-    "Soal sama untuk semua peserta, digunakan untuk evaluasi dasar dan pengukuran awal.",
-  random:
-    "Soal diacak dari bank soal, digunakan untuk latihan umum dan mencegah kecurangan.",
-  adaptive_fixed_length:
-    "Level Soal menyesuaikan performa peserta, memberi pengalaman ujian yang efisien dan seimbang.",
-  adaptive_variable_length:
-    "Level Soal berubah dinamis sesuai kemampuan peserta untuk mengukur tingkat kemampuan secara akurat.",
+  static: "Soal sama untuk semua peserta, urutan tetap.",
+  random: "Soal diacak dari bank soal untuk setiap peserta.",
+  rule_based: "Soal diberikan bertahap berdasarkan kemampuan jawaban sebelumnya (Wajib dijawab).",
 };
 
 // Template Halaman Home
@@ -52,7 +42,6 @@ const createJoinRoomFormTemplate = () => `
         <form id="joinRoomForm" class="join-room-form">
       <input type="text" class="keypass-input" placeholder="Contoh: YU299NJN" required />
       <button type="submit" class="submit-btn">
-        <i class="bi bi-arrow-right-circle"></i>
         <span>Bergabung</span>
       </button>
     </form>
@@ -525,34 +514,81 @@ export const createWaitingRoomSkeletonTemplate = () => `
 
 // Template halaman ujian
 export const createExamPageTemplate = (roomName) => `
-  <div class="exam-container">
-    <div class="exam-header">
-      <h1 id="exam-room-name">${roomName || "Asesmen"}</h1>
-      <div id="exam-progress">Soal 1 dari ...</div>
-    </div>
-    <div id="exam-content" class="exam-content">
+  <div class="exam-layout">
+    <aside id="exam-sidebar" class="exam-sidebar">
+       <div class="sidebar-header">
+          <h3>Navigasi Soal</h3>
+          <p class="sidebar-info">Klik nomor untuk pindah.</p>
+       </div>
+       <div id="question-navigation-grid" class="navigation-grid">
+          </div>
+       <div class="sidebar-legend">
+          <div class="legend-item"><span class="dot active"></span> Aktif</div>
+          <div class="legend-item"><span class="dot answered"></span> Dijawab</div>
+          <div class="legend-item"><span class="dot flagged"></span> Ragu</div>
+       </div>
+    </aside>
+
+    <div class="exam-main-container">
+      <div class="exam-header">
+        <h1 id="exam-room-name">${roomName || "Asesmen"}</h1>
+        <div class="exam-header-right">
+           <div id="exam-progress-text" class="progress-badge">Soal - dari -</div>
+        </div>
       </div>
-    <div class="exam-footer">
-      <button id="next-btn" class="submit-btn">
-        <span>Lanjutkan</span> <i class="bi bi-arrow-right"></i>
-      </button>
+      
+      <div id="exam-content" class="exam-content">
+        </div>
+      
+      <div class="exam-footer">
+        <button id="flag-btn" class="flag-btn">
+          <i class="bi bi-flag"></i> <span>Ragu-ragu</span>
+        </button>
+
+        <button id="next-btn" class="submit-btn">
+          <span>Jawab & Lanjutkan</span> 
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
     </div>
   </div>
   ${createResultModalTemplate()} 
 `;
 
-// Template untuk menampilkan soal
-export const createQuestionTemplate = (question, questionCounter) => `
+export const createQuestionTemplate = (question) => `
   <div class="question-area">
     ${
       question.image_url
-        ? `<img id="question-image" src="${question.image_url}" alt="Ilustrasi soal">`
+        ? `<div class="question-image-wrapper">
+             <img id="question-image" src="${question.image_url}" alt="Soal">
+           </div>`
         : ""
     }
-    <p id="question-text">${question.question_text}</p>
+    <div class="question-text-wrapper">
+       <p id="question-text">${question.question_text}</p>
+    </div>
   </div>
+  
   <div id="options-container" class="options-container">
-    ${createOptionsTemplate(question)}
+    ${["A", "B", "C", "D", "E"]
+      .map((opt) => {
+        const key = `option_${opt.toLowerCase()}`;
+        if (!question[key]) return "";
+
+        // Cek apakah siswa sudah menjawab soal ini sebelumnya (Pre-fill)
+        // Backend harus mengembalikan field 'student_answer' di objek question jika sudah dijawab
+        const isChecked = question.student_answer === opt ? "checked" : "";
+
+        return `
+        <div class="option-wrapper">
+          <input type="radio" name="option" value="${opt}" id="option-${opt}" ${isChecked}>
+          <label for="option-${opt}" class="option-label">
+            <span class="option-key">${opt}</span>
+            <span class="option-value">${question[key]}</span>
+          </label>
+        </div>`;
+      })
+      .join("")}
   </div>
 `;
 
@@ -579,38 +615,39 @@ const createOptionsTemplate = (question) => {
 };
 
 // Template pop-up hasil ujian (summary)
-const createResultModalTemplate = () => `
+export const createResultModalTemplate = () => `
   <div id="result-modal-overlay" class="hidden">
     <div class="modal-content result-modal">
       <div class="modal-header">
+        <div class="finish-icon"><i class="bi bi-check-circle-fill"></i></div>
         <h2>Asesmen Selesai!</h2>
-        <p>Kerja bagus! Berikut adalah ringkasan singkat dari performa Anda.</p>
+        <p>Jawaban Anda telah berhasil dikumpulkan.</p>
       </div>
       <div class="modal-body">
         <div class="result-summary-cards">
           <div class="summary-card">
             <div>
               <h3>Skor Akhir</h3>
-              <p id="modal-score">0.00</p>
+              <p id="modal-score">0</p>
             </div>
           </div>
           <div class="summary-card">
             <div>
-              <h3>Jawaban Benar</h3>
-              <p id="modal-correct">0/0</p>
+              <h3>Benar</h3>
+              <p id="modal-correct">0</p>
             </div>
           </div>
           <div class="summary-card">
             <div>
-              <h3>Total Waktu</h3>
-              <p id="modal-time">00:00</p>
+              <h3>Waktu</h3>
+              <p id="modal-time">-</p>
             </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <a href="#/home" id="close-result-btn" class="action-btn">
-          <i class="bi bi-arrow-left"></i> Kembali ke Home
+          <i class="bi bi-house"></i> Kembali ke Home
         </a>
       </div>
     </div>

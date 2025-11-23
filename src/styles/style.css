@@ -12,10 +12,10 @@
 
 /* anti cheat */
 .exam-container {
-  user-select: none;  
-  -webkit-user-select: none;  
-  -moz-user-select: none;  
-  -ms-user-select: none;  
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 * {
@@ -29,7 +29,6 @@ body {
   background-color: var(--background-color);
   color: var(--text-primary);
 }
-
 
 /* --- Halaman Login --- */
 .login-page-container {
@@ -677,14 +676,14 @@ a.action-btn.disabled {
 
 .option-item.selected-correct {
   background-color: #e7f1ff;
-  border-color: var(--primary-color);;
+  border-color: var(--primary-color);
   color: var(--text-primary);
   font-weight: 500;
 }
 
 .option-item.selected-incorrect {
   background-color: #e7f1ff;
-  border-color: var(--primary-color);;
+  border-color: var(--primary-color);
   color: var(--text-primary);
   font-weight: 500;
 }
@@ -905,9 +904,9 @@ a.action-btn.disabled {
 }
 
 .final-message {
-  font-size: 5rem;  
+  font-size: 5rem;
   font-weight: 600;
-  animation: fadeIn 0.5s ease-out;  
+  animation: fadeIn 0.5s ease-out;
   color: white;
 }
 
@@ -969,7 +968,6 @@ a.action-btn.disabled {
 .modal-footer .action-btn {
   width: auto;
 }
-
 
 @keyframes fadeIn {
   from {
@@ -1099,7 +1097,7 @@ a.action-btn.disabled {
 /* Pop up result */
 .modal-content.result-modal {
   text-align: center;
-  max-width: 650px; 
+  max-width: 650px;
 }
 
 .result-modal .modal-header {
@@ -1112,7 +1110,7 @@ a.action-btn.disabled {
 
 .result-summary-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);  
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -1145,7 +1143,7 @@ a.action-btn.disabled {
 }
 
 .result-modal .modal-footer {
-  justify-content: center;  
+  justify-content: center;
 }
 
 .result-modal .modal-footer .action-btn {
@@ -1155,4 +1153,353 @@ a.action-btn.disabled {
   padding: 0.75rem 1.25rem;
   font-weight: 500;
   width: auto;
+}
+
+/* ... CSS Global Lainnya Tetap ... */
+
+/* === EXAM PAGE LAYOUT === */
+.exam-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr; /* Sidebar 280px, sisa konten */
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  align-items: start;
+}
+
+/* Sidebar Styling */
+.exam-sidebar {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 80px; /* Agar sticky saat scroll */
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.exam-sidebar.hidden {
+  display: none;
+}
+
+.sidebar-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.sidebar-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-info {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Navigation Grid */
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 kolom */
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.nav-item {
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.2s;
+  color: var(--text-secondary);
+}
+
+.nav-item:hover {
+  background-color: #f1f3f5;
+  border-color: #adb5bd;
+}
+
+/* Status Colors for Nav Items */
+.nav-item.active {
+  background-color: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+  font-weight: 600;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3);
+}
+
+.nav-item.answered {
+  background-color: #d1e7dd; /* Hijau muda */
+  color: #0f5132;
+  border-color: #badbcc;
+}
+
+/* Prioritas warna: Active > Flagged > Answered */
+.nav-item.active.answered {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.nav-item.flagged {
+  background-color: #fff3cd; /* Kuning */
+  color: #856404;
+  border-color: #ffecb5;
+}
+
+.nav-item.active.flagged {
+  border: 2px solid #ffc107; /* Border kuning tebal jika aktif+flagged */
+}
+
+/* Legend */
+.sidebar-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.active {
+  background-color: var(--primary-color);
+}
+.dot.answered {
+  background-color: #198754;
+}
+.dot.flagged {
+  background-color: #ffc107;
+}
+
+/* Main Exam Container */
+.exam-main-container {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+}
+
+.exam-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exam-header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.progress-badge {
+  background-color: #e9ecef;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Exam Content & Question */
+.exam-content {
+  flex-grow: 1;
+  padding: 2rem;
+}
+
+.question-area {
+  margin-bottom: 2rem;
+}
+
+.question-image-wrapper {
+  text-align: center;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.question-image-wrapper img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+#question-text {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Options */
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.option-wrapper {
+  position: relative;
+}
+
+.option-label {
+  display: flex;
+  align-items: flex-start; /* Align text top if long */
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+.option-label:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.option-wrapper input:checked + .option-label {
+  border-color: var(--primary-color);
+  background-color: #e7f1ff;
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.option-key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  margin-top: 2px; /* optical alignment */
+}
+
+.option-wrapper input:checked + .option-label .option-key {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.option-value {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Footer & Buttons */
+.exam-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between; /* Space Flag and Next */
+  align-items: center;
+  background-color: #fcfcfc;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.flag-btn {
+  background: transparent;
+  border: 1px solid #ffc107;
+  color: #997404;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.flag-btn:hover {
+  background-color: #fff3cd;
+}
+
+.flag-btn.active {
+  background-color: #ffc107;
+  color: #fff;
+}
+
+.submit-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.submit-btn.finish-state {
+  background-color: #198754; /* Hijau untuk finish */
+}
+.submit-btn.finish-state:hover {
+  background-color: #157347;
+}
+
+/* Loading Spinner Center */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+  .exam-layout {
+    grid-template-columns: 1fr; /* Stack sidebar on top */
+    gap: 1rem;
+  }
+
+  .exam-sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    order: 2; /* Sidebar pindah ke bawah di mobile jika mau, atau order 1 utk atas */
+  }
+
+  /* Agar Sidebar bisa di-toggle di mobile (Opsional, tapi disini kita tampilkan saja) */
+  .navigation-grid {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  }
 }

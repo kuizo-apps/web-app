@@ -3,14 +3,15 @@ import { getAccessToken } from "../utils/auth.js";
 
 const ENDPOINTS = {
   LOGIN: `${API_CONFIG.BASE_URL}/login`,
-  MY_ROOMS: `${API_CONFIG.BASE_URL}/rooms/my`,
+  MY_ROOMS: `${API_CONFIG.BASE_URL}/my-rooms`,
   STUDENT_REPORT: `${API_CONFIG.BASE_URL}/student-reports`,
-  JOIN_ROOM: `${API_CONFIG.BASE_URL}/rooms/join`,
-  WAITING_ROOM: `${API_CONFIG.BASE_URL}/rooms`,
-  LEAVE_ROOM: `${API_CONFIG.BASE_URL}/rooms/leave`,
-  START_EXAM: `${API_CONFIG.BASE_URL}/exam/start`,
-  ANSWER_NEXT: `${API_CONFIG.BASE_URL}/exam/next`,
-  GET_RESULT: `${API_CONFIG.BASE_URL}/exam/result`,
+  JOIN_ROOM: `${API_CONFIG.BASE_URL}/rooms-join`,
+  WAITING_ROOM: `${API_CONFIG.BASE_URL}/rooms-participants`,
+  LEAVE_ROOM: `${API_CONFIG.BASE_URL}/rooms-leave`,
+  START_EXAM: `${API_CONFIG.BASE_URL}/exam-start`,
+  ANSWER_NEXT: `${API_CONFIG.BASE_URL}/exam-next`,
+  GET_QUESTION: `${API_CONFIG.BASE_URL}/exam-question`,
+  GET_RESULT: `${API_CONFIG.BASE_URL}/exam-result`,
 };
 
 export async function loginUser({ email, password }) {
@@ -35,17 +36,12 @@ export async function loginUser({ email, password }) {
       );
     }
   }
-
   return response.json();
 }
 
 export async function getMyRooms(params) {
   const token = getAccessToken();
-  if (!token) {
-    throw new Error(
-      "Akses token tidak ditemukan. Silakan login terlebih dahulu."
-    );
-  }
+  if (!token) throw new Error("Akses token tidak ditemukan.");
 
   const response = await fetch(ENDPOINTS.MY_ROOMS, {
     method: "GET",
@@ -59,15 +55,29 @@ export async function getMyRooms(params) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || "Gagal mengambil data ruangan.");
   }
+  return response.json();
+}
 
+export async function getQuestionDetail(roomId, questionId) {
+  const token = getAccessToken();
+  if (!token) throw new Error("Token tidak ditemukan.");
+
+  const response = await fetch(`${ENDPOINTS.GET_QUESTION}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ room_id: roomId, question_id: questionId }),
+  });
+
+  if (!response.ok) throw new Error("Gagal memuat soal.");
   return response.json();
 }
 
 export async function getStudentReport(roomId) {
   const token = getAccessToken();
-  if (!token) {
-    throw new Error("Token tidak ditemukan. Silakan login kembali.");
-  }
+  if (!token) throw new Error("Token tidak ditemukan.");
 
   const response = await fetch(`${ENDPOINTS.STUDENT_REPORT}/${roomId}`, {
     method: "GET",
@@ -83,7 +93,6 @@ export async function getStudentReport(roomId) {
       errorData.message || `Gagal memuat laporan (Status: ${response.status})`
     );
   }
-
   return response.json();
 }
 
@@ -114,16 +123,13 @@ export async function getWaitingRoomDetails(roomId) {
   const token = getAccessToken();
   if (!token) throw new Error("Token tidak ditemukan.");
 
-  const response = await fetch(
-    `${ENDPOINTS.WAITING_ROOM}/${roomId}/participants`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await fetch(`${ENDPOINTS.WAITING_ROOM}/${roomId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -168,6 +174,7 @@ export async function startExam(roomId) {
     },
     body: JSON.stringify({ room_id: roomId }),
   });
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(
@@ -189,6 +196,7 @@ export async function answerAndNext(payload) {
     },
     body: JSON.stringify(payload),
   });
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(
@@ -198,6 +206,20 @@ export async function answerAndNext(payload) {
   return response.json();
 }
 
+export async function finishExam(roomId) {
+  const token = getAccessToken();
+  if (!token) throw new Error("Token tidak ditemukan.");
+  const response = await fetch(ENDPOINTS.FINISH_EXAM, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ room_id: roomId }),
+  });
+  if (!response.ok) throw new Error("Gagal menyelesaikan ujian.");
+  return response.json();
+}
 
 export async function getResult(roomId) {
   const token = getAccessToken();
@@ -210,6 +232,7 @@ export async function getResult(roomId) {
       Authorization: `Bearer ${token}`,
     },
   });
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(

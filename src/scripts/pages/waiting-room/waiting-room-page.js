@@ -10,6 +10,8 @@ import WaitingRoomPresenter from "./waiting-room-presenter.js";
 import Swal from "sweetalert2";
 
 class WaitingRoomPage {
+  #presenter = null;
+
   render() {
     return createWaitingRoomSkeletonTemplate();
   }
@@ -18,60 +20,74 @@ class WaitingRoomPage {
     const url = parseActivePathname();
     const roomId = url.id;
 
-    this._presenter = new WaitingRoomPresenter({
+    this.#presenter = new WaitingRoomPresenter({
       view: this,
       model: Api,
     });
 
-    this._presenter.startPolling(roomId);
+    // Mulai polling data
+    await this.#presenter.startPolling(roomId);
   }
 
   beforeUnload() {
-    this._presenter.stopPolling();
+    if (this.#presenter) {
+      this.#presenter.stopPolling();
+    }
   }
 
   showLoading() {
-    document.querySelector(".main-content").innerHTML =
-      createWaitingRoomSkeletonTemplate();
+    const content = document.querySelector(".main-content");
+    if (content) content.innerHTML = createWaitingRoomSkeletonTemplate();
   }
 
   showWaitingRoom(data) {
     const currentUserId = getUserId();
-    document.querySelector(".main-content").innerHTML =
-      createWaitingRoomPageTemplate(data, currentUserId);
+    const content = document.querySelector(".main-content");
 
-    document.getElementById("leaveRoomBtn").addEventListener("click", () => {
-      Swal.fire({
-        title: "Anda yakin ingin keluar?",
-        text: "Anda bisa bergabung kembali selama sesi masih dalam persiapan.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Ya, keluar!",
-        cancelButtonText: "Batal",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const roomId = parseActivePathname().id;
-          this._presenter.leaveRoom(roomId);
-        }
+    if (content) {
+      content.innerHTML = createWaitingRoomPageTemplate(data, currentUserId);
+    }
+
+    // Listener Tombol Keluar
+    const leaveBtn = document.getElementById("leaveRoomBtn");
+    if (leaveBtn) {
+      leaveBtn.addEventListener("click", () => {
+        Swal.fire({
+          title: "Anda yakin ingin keluar?",
+          text: "Anda harus memasukkan Keypass lagi jika ingin bergabung kembali.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Ya, keluar!",
+          cancelButtonText: "Batal",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const roomId = parseActivePathname().id;
+            this.#presenter.leaveRoom(roomId);
+          }
+        });
       });
-    });
+    }
   }
 
   updateWaitingRoom(data) {
-    const participantListContainer =
-      document.querySelector(".participant-list");
-    const participantCountEl = document.getElementById("participant-count");
     const currentUserId = getUserId();
 
+    // Update List Peserta
+    const participantListContainer =
+      document.querySelector(".participant-list");
     if (participantListContainer) {
       participantListContainer.innerHTML = createParticipantItemsTemplate(
         data.participants,
         currentUserId
       );
     }
-    if (participantCountEl) {
+
+    // Update Counter Jumlah Peserta
+    const participantCountEl = document.getElementById("participant-count");
+    if (participantCountEl && data.room) {
+      // Pastikan backend mengirim field total_participants (yg kita fix di atas)
       participantCountEl.innerHTML = `<i class="bi bi-people-fill"></i> ${data.room.total_participants} Peserta Bergabung`;
     }
   }
@@ -79,13 +95,14 @@ class WaitingRoomPage {
   redirectToExam(roomId) {
     const overlay = document.getElementById("countdown-overlay");
     const timerEl = document.getElementById("countdown-timer");
-
-    const countdownContent = overlay.querySelector(".countdown-content");
+    const countdownContent = overlay
+      ? overlay.querySelector(".countdown-content")
+      : null;
 
     if (!overlay || !timerEl || !countdownContent) return;
 
     overlay.classList.remove("hidden");
-    let count = 5;
+    let count = 3; // Ubah ke 3 detik biar lebih cepat (opsional)
     timerEl.textContent = count;
 
     const intervalId = setInterval(() => {
@@ -96,10 +113,15 @@ class WaitingRoomPage {
         clearInterval(intervalId);
         countdownContent.innerHTML =
           '<div class="final-message">Ujian Dimulai!</div>';
+
         setTimeout(() => {
           window.location.hash = `/exam/${roomId}`;
-          setTimeout(() => overlay.classList.add("hidden"), 500);
-        }, 1500);
+          // Cleanup overlay setelah pindah halaman (supaya tidak nyangkut saat back)
+          setTimeout(() => {
+            overlay.classList.add("hidden");
+            countdownContent.innerHTML = `<h1>Mempersiapkan sesi asesmen Anda...</h1><div id="countdown-timer">5</div>`;
+          }, 1000);
+        }, 1000);
       }
     }, 1000);
   }
@@ -126,11 +148,18 @@ class WaitingRoomPage {
   showError(message) {
     Swal.fire({
       icon: "error",
-      title: "Gagal Memuat Room",
+      title: "Oops...",
       text: message,
-      confirmButtonText: "Kembali ke Home",
+      confirmButtonText: "Kembali",
     }).then(() => {
-      window.location.hash = "/home";
+      // Jangan paksa redirect ke home jika error polling sesaat (koneksi buruk)
+      // Redirect hanya jika fatal
+      if (
+        message.includes("Room tidak ditemukan") ||
+        message.includes("Anda bukan peserta")
+      ) {
+        window.location.hash = "/home";
+      }
     });
   }
 }
