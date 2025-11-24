@@ -12,6 +12,7 @@ const ENDPOINTS = {
   ANSWER_NEXT: `${API_CONFIG.BASE_URL}/exam-next`,
   GET_QUESTION: `${API_CONFIG.BASE_URL}/exam-question`,
   GET_RESULT: `${API_CONFIG.BASE_URL}/exam-result`,
+  FINISH_EXAM: `${API_CONFIG.BASE_URL}/exam-finish`,
 };
 
 export async function loginUser({ email, password }) {
