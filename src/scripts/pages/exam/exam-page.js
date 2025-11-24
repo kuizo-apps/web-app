@@ -335,6 +335,11 @@ class ExamPage {
           this._renderFinishState(finishRes.data || finishRes, this.#roomId);
         }
       } else {
+        if (!response.question) {
+          const finishRes = await Api.finishExam(this.#roomId);
+          this._renderFinishState(finishRes.data || finishRes, this.#roomId);
+          return;
+        }
         // Tampilkan soal berikutnya (Sequential default dari backend)
         this.showQuestion(response.question, response.is_last_question);
       }
